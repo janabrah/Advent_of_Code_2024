@@ -1,59 +1,55 @@
-# import numpy as np
-
-f = open("input_02.txt")
+f = open("./day_02/input_02.txt")
 input = []
 for line in f:
     input.append([int(i) for i in line.strip("\n").split()])
 
 
-def prettyPrint(myArray):
-    for row in myArray:
-        print("".join([str(row[i]) for i in range(len(row))]))
-    print()
-
-
-def checkRow(row, grace=False):
-    print(row)
-    growing = True
-    shrinking = True
-    if not grace and (checkRow(row[:-1], True) or checkRow(row[1:], True)):
-        return True
+def checkRow(row, graceUsed=False):
+    trackers = [True, True]  # whether we might still be [growing, shrinking]
     for i in range(len(row) - 1):
-        if row[i + 1] < row[i]:
-            if not shrinking:
-                print("not shrinking" + str(grace))
-                if not grace:
-                    return checkRow(row[:i] + row[i + 1 :], True) or checkRow(
-                        row[: i + 1] + row[i + 2 :], True
-                    )
+        isShrinking = row[i + 1] < row[i]
+        if not trackers[isShrinking]:
+            if not graceUsed:
+                return checkDeeper(row, i, i + 1)
+            else:
                 return False
-            if growing and (not grace) and checkRow(row[:i] + row[i + 1 :], True):
+        if trackers[not isShrinking] and not graceUsed:
+            if checkRow(row[:i] + row[i + 1 :], True):
                 return True
-            growing = False
-        elif row[i + 1] > row[i]:
-            if not growing:
-                print("not growing" + str(grace))
-                if not grace:
-                    return checkRow(row[:i] + row[i + 1 :], True) or checkRow(
-                        row[: i + 1] + row[i + 2 :], True
-                    )
-                return False
-            if shrinking and (not grace) and checkRow(row[:i] + row[i + 1 :], True):
-                return True
-            shrinking = False
-        if not (abs(row[i + 1] - row[i]) >= 1 and abs(row[i + 1] - row[i]) <= 3):
-            print("wrong spacing" + str(grace))
-            if not grace:
-                return checkRow(row[:i] + row[i + 1 :], True) or checkRow(
-                    row[: i + 1] + row[i + 2 :], True
-                )
+        trackers[not isShrinking] = False
+        if not stepSize(row[i + 1], row[i]):
+            if not graceUsed:
+                return checkDeeper(row, i, i + 1)
             return False
     return True
 
 
-count = 0
-for row in input:
-    count += checkRow(row)
-print(count)
+def stepSize(next, current):
+    return abs(next - current) >= 1 and abs(next - current) <= 3
 
-# print(input[:5])
+
+def checkDeeper(row, candidate1, candidate2):
+    success = False
+    if candidate1 < len(row):
+        success = success or checkRow(row[:candidate1] + row[candidate1 + 1 :], True)
+    if (not success) and candidate2 < len(row):
+        success = success or checkRow(row[:candidate2] + row[candidate2 + 1 :], True)
+    return success
+
+
+def partOne():
+    count = 0
+    for row in input:
+        count += checkRow(row, True)
+    return count
+
+
+def partTwo():
+    count = 0
+    for row in input:
+        count += checkRow(row, False)
+    return count
+
+
+print("Part 1 is " + str(partOne()))
+print("Part 2 is " + str(partTwo()))
