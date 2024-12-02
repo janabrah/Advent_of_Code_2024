@@ -1,9 +1,9 @@
 import numpy as np
 
-f = open("./day_xx/input.txt")
+f = open("./day_03/input.txt")
 input = []
 for line in f:
-    input.append([int(i) for i in line.strip("\n").split()])
+    input.append(line.strip("\n"))
 
 
 def prettyPrint(myArray):
