@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 f = open("./day_05/input.txt")
 rules = []
@@ -84,4 +85,7 @@ print(rules)
 print(pages)
 print(makeRuleDict(rules))
 print(partOne())
-print(partTwo())
+startTime = time.time()
+for i in range(100):
+    partTwo()
+print(time.time() - startTime)
