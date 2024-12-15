@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 
 def importFile(filename):
@@ -67,4 +68,9 @@ def countTrails(myMap, i, j):
     return len(previousTrails)
 
 
+t = time.time()
+print(partOne())
+print(time.time() - t)
+t = time.time()
 print(partTwo())
+print(time.time() - t)
